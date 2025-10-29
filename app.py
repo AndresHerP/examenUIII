@@ -66,10 +66,31 @@ def agregar_dispositivo():
 
     return jsonify({"mensaje": "Dispositivo agregado", "dispositivo": dispositivos[id_disp]}), 201
 
+@app.route('/dispositivos/<id_disp>', methods=['PUT'])
+def modificar_dispositivo(id_disp):
+    if id_disp not in dispositivos:
+        return jsonify({"error": "Dispositivo no encontrado"}), 404
+
+    data = request.json
+    nombre = data.get('nombre', dispositivos[id_disp]['nombre'])
+    ip = data.get('ip', dispositivos[id_disp]['ip'])
+    otros = calcular_otro(ip, nombre)
+
+    dispositivos[id_disp].update({
+        "nombre": nombre,
+        "descripcion": data.get('descripcion', dispositivos[id_disp]['descripcion']),
+        "ip": ip,
+        "mac": data.get('mac', dispositivos[id_disp]['mac']),
+        "ubicacion": data.get('ubicacion', dispositivos[id_disp]['ubicacion']),
+        "tipo": data.get('tipo', dispositivos[id_disp]['tipo']),
+        "otros": otros
+    })
+
+    return jsonify({"mensaje": "Dispositivo modificado", "dispositivo": dispositivos[id_disp]})
+    
 @app.route('/', methods=['GET'])
-def home():
-    return render_template_string("""
-    <h1>Welcome to the Home Page</h1>
-    <p>This is a simple Flask application.</p>
-    <a href="{{ url_for('about') }}">About</a>
-    """)
+def test():
+    return "Hola mundo"
+
+if __name__ == '__main__':
+    app.run(debug=True)
