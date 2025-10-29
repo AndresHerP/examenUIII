@@ -9,6 +9,36 @@ def calcular_otro(ip, nombre):
     nombre_formateado = nombre.replace(" ", "_")
     return f"{ultimo_octeto * 3 + longitud_nombre}:{nombre_formateado}"
 
+@app.route('/dispositivos_html', methods=['GET'])
+def dispositivos_html():
+    html = """
+    <html>
+    <head>
+        <style>
+            .dispositivo {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Lista de Dispositivos</h1>
+        {% for id, disp in dispositivos.items() %}
+        <div class="dispositivo">
+            <strong>Nombre:</strong> {{ disp['nombre'] }}<br>
+            <strong>Descripción:</strong> {{ disp['descripcion'] }}<br>
+            <strong>IP:</strong> {{ disp['ip'] }}<br>
+            <strong>MAC:</strong> {{ disp['mac'] }}<br>
+            <strong>Ubicación:</strong> {{ disp['ubicacion'] }}<br>
+            <strong>Tipo:</strong> {{ disp['tipo'] }}<br>
+            <strong>Otros:</strong> {{ disp['otros'] }}<br>
+        </div>
+        {% endfor %}
+    </body>
+    </html>
+    """
+    return render_template_string(html, dispositivos=dispositivos)
 
 @app.route('/', methods=['GET'])
 def home():
