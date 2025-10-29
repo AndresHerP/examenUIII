@@ -40,6 +40,32 @@ def dispositivos_html():
     """
     return render_template_string(html, dispositivos=dispositivos)
 
+@app.route('/dispositivos', methods=['POST'])
+def agregar_dispositivo():
+    data = request.json
+    id_disp = data.get('id')
+    if not id_disp:
+        return jsonify({"error": "Se requiere un ID"}), 400
+
+    if id_disp in dispositivos:
+        return jsonify({"error": "El dispositivo ya existe"}), 400
+
+    nombre = data.get('nombre', '')
+    ip = data.get('ip', '')
+    otros = calcular_otro(ip, nombre)
+
+    dispositivos[id_disp] = {
+        "nombre": nombre,
+        "descripcion": data.get('descripcion', ''),
+        "ip": ip,
+        "mac": data.get('mac', ''),
+        "ubicacion": data.get('ubicacion', ''),
+        "tipo": data.get('tipo', ''),
+        "otros": otros
+    }
+
+    return jsonify({"mensaje": "Dispositivo agregado", "dispositivo": dispositivos[id_disp]}), 201
+
 @app.route('/', methods=['GET'])
 def home():
     return render_template_string("""
